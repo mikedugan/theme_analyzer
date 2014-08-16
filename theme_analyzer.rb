@@ -13,36 +13,34 @@ class ThemeAnalyzer
 	end
 
 	def getOutputName(filename)
-		filename.split('.')[0]
+		"#{filename.split('.')[0]}Output.html"
 	end
 
 	def getColors
-		colors = @reader.sortedColors
-		colors = colors.select { |key, value| key.length < 7}	
-		colors
+		@reader.sortedColors.select {|k,v| k.length < 7}
 	end
 
 	def generate
-		File.open("#{getOutputName(@filename)}Output.html", 'w') { |file|
-			file.write "<!DOCTYPE html><html><head>"
-			file.write "<link rel='stylesheet' href='bs.css'>"
-			file.write "</head><body>"
-			i = 0
-			getColors.each do |color, occurences|
-				if i % 4 == 0
-					file.write "<div style='margin:10px;padding:10px;border-bottom: 1px solid #999' class='row'>"
+		File.open(getOutputName(@filename), 'w') { |file|
+			file.write "<!DOCTYPE html><html><head><link rel='stylesheet' href='bs.css'></head><body>"
+			getColors.each_slice(4) do |batch|
+				file.write "<div style='margin:10px;padding:10px;border-bottom: 1px solid #999' class='row'>"
+				batch.each do |color, occurences|
+					writeColor(file, color, occurences)
 				end
-				file.write "<div class='col-md-3'>"
-				file.write "<h4>You used the color #{color} #{occurences} times</h4>
-				<button class='btn' style='border:1px solid black;width:100px;height:50px;background:#"+color+"'></button>
-				</div>"
-				if i % 4 == 3
-					file.write "</div>"
-				end
-
-				i += 1
+				file.write "</div>"
 			end
 			file.write "</body></html>"
 		}
+	end
+
+	def writeColor(file, color, occurences)
+		file.write "
+		<div class='col-md-3'>
+			<h4>You used the color #{color} #{occurences} times</h4>
+			<button class='btn' 
+			style='border:1px solid black;width:100px;height:50px;
+			background:#"+color+"'></button>
+		</div>"
 	end
 end

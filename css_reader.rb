@@ -27,9 +27,9 @@ class CssReader
   end
 
   def convertRgbToHex(r,g,b)
-    sprintf('%02d', Integer(r).to_s(16)) + 
-    sprintf('%02d', Integer(g).to_s(16)) +
-    sprintf('%02d', Integer(b).to_s(16))
+    Integer(r).to_s(16).rjust(2, "0") + 
+    Integer(g).to_s(16).rjust(2, "0") +
+    Integer(b).to_s(16).rjust(2, "0")
   end
 
   def expandHex(hex)
